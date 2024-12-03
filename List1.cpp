@@ -4,133 +4,123 @@
 
 using namespace std;
 
-// Структура для узла односвязного списка
 struct ListOne {
-    int data;
-    ListOne* next;
+    int data; // Данные, хранящиеся в узле списка
+    ListOne* next;// Указатель на следующий узел в списке
 };
 
-// Функция добавления элемента в начало односвязного списка
 void addToHeadL1(ListOne*& head, int value) {
-    ListOne* newNode = new ListOne; // Создаем новый узел
-    newNode->data = value; // Присваиваем ему значение
-    newNode->next = head; // Новый узел указывает на текущую голову
-    head = newNode; // Новый узел становится головой
+    ListOne* newNode = new ListOne;
+    newNode->data = value;
+    newNode->next = head;
+    head = newNode;
 }
 
-// Функция добавления элемента в конец односвязного списка
 void addToTailL1(ListOne*& head, int value) {
-    ListOne* newNode = new ListOne; // Создаем новый узел
-    newNode->data = value; // Присваиваем ему значение
-    newNode->next = nullptr; // Новый узел не имеет следующего узла
+    ListOne* newNode = new ListOne;
+    newNode->data = value;
+    newNode->next = nullptr;
 
     if (head == nullptr) {
-        head = newNode; // Если список пустой, новый узел становится головой
+        head = newNode;
     } else {
         ListOne* temp = head;
-        while (temp->next != nullptr) {
-            temp = temp->next; // Ищем последний узел
+        while (temp->next != nullptr) { //поиск послед узла и добав нов
+            temp = temp->next;
         }
-        temp->next = newNode; // Добавляем новый узел в конец списка
+        temp->next = newNode;
     }
 }
 
-// Функция удаления элемента из начала односвязного списка
 void removeHeadL1(ListOne*& head) {
     if (head != nullptr) {
-        ListOne* temp = head; // Сохраняем текущую голову
-        head = head->next; // Перемещаем голову на следующий элемент
-        delete temp; // Удаляем предыдущую голову
+        ListOne* temp = head;
+        head = head->next;
+        delete temp; //освоб память
     }
 }
 
-// Функция удаления элемента из конца односвязного списка
 void removeTailL1(ListOne*& head) {
-    if (head == nullptr) {
-        return; // Если список пустой, выходим
+    if (head == nullptr) { //пустой список
+        return;
     }
     if (head->next == nullptr) {
-        delete head; // Если в списке только один элемент, удаляем его
-        head = nullptr; // Обнуляем указатель на голову
+        delete head;
+        head = nullptr; //один элем
     } 
     else {
         ListOne* temp = head;
-        while (temp->next->next != nullptr) {
-            temp = temp->next; // Ищем предпоследний узел
+        while (temp->next->next != nullptr) { //поиск предпослед элем
+            temp = temp->next;
         }
-        delete temp->next; // Удаляем последний узел
-        temp->next = nullptr; // Обнуляем указатель на следующий узел предпоследнего узла
+        delete temp->next;
+        temp->next = nullptr;
     }
 }
 
-// Функция удаления элемента по значению из односвязного списка
 void removeByValueL1(ListOne*& head, int value) {
     if (head == nullptr) {
-        return; // Если список пустой, выходим
+        return;
     }
 
-    if (head->data == value) {
-        ListOne* temp = head; // Если удаляемый элемент - это голова
-        head = head->next; // Перемещаем голову на следующий элемент
-        delete temp; // Удаляем предыдущую голову
+    if (head->data == value) { //нач списка
+        ListOne* temp = head;
+        head = head->next;
+        delete temp;
         return;
     }
 
     ListOne* temp = head;
     while (temp->next != nullptr && temp->next->data != value) {
-        temp = temp->next; // Ищем узел, предшествующий удаляемому
+        temp = temp->next;
     }
 
     if (temp->next != nullptr) {
-        ListOne* toDelete = temp->next; // Сохраняем указатель на удаляемый узел
-        temp->next = temp->next->next; // Обновляем указатель следующего узла
-        delete toDelete; // Удаляем найденный узел
+        ListOne* toDelete = temp->next;
+        temp->next = temp->next->next;
+        delete toDelete;
     }
 }
 
-// Функция поиска элемента по значению в односвязном списке
 bool searchL1(ListOne* head, int value) {
-    ListOne* temp = head; // Начинаем с головы списка
+    ListOne* temp = head;
     while (temp != nullptr) {
-        if (temp->data == value) { // Если найден элемент с указанным значением
-            return true; // Возвращаем true
+        if (temp->data == value) {
+            return true;
         }
-        temp = temp->next; // Переходим к следующему узлу
+        temp = temp->next;
     }
-    return false; // Если элемент не найден, возвращаем false
+    return false;
 }
 
-// Функция вывода содержимого односвязного списка на экран
 void printList1(ListOne* head) {
-    ListOne* temp = head; // Начинаем с головы списка
+    ListOne* temp = head;
     while (temp != nullptr) {
-        cout << temp->data << " "; // Выводим значение текущего узла
-        temp = temp->next; // Переходим к следующему узлу
+        cout << temp->data << " ";
+        temp = temp->next;
     }
     cout << endl;
 }
 
-// Функция освобождения памяти, занимаемой односвязным списком
-void freeList1(ListOne*& head) {
+void freeList1(ListOne*& head) { //освоб пам с головы
     while (head != nullptr) {
-        removeHeadL1(head); // Удаляем узлы и освобождаем память
+        removeHeadL1(head);
     }
 }
 
-// Функция записи односвязного списка в файл
 void writeListToFile(ListOne* head, const string& filename) {
-    ofstream file(filename); // Открываем файл для записи
+    ofstream file(filename);
 
     if (!file.is_open()) {
-        cerr << "Ошибка при открытии файла для записи" << endl; // Проверка на успешное открытие файла
+        cerr << "Ошибка при открытии файла для записи" << endl;
         return;
     }
 
-    ListOne* temp = head; // Начинаем с головы списка
+    ListOne* temp = head;
     while (temp != nullptr) {
-        file << temp->data << endl; // Записываем значение текущего узла в файл
-        temp = temp->next; // Переходим к следующему узлу
+        file << temp->data << endl;
+        temp = temp->next;
     }
 
-    file.close(); // Закрываем файл
+    file.close();
 }
