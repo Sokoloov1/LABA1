@@ -4,152 +4,143 @@
 
 using namespace std;
 
-// Структура для узла двусвязного списка
 struct NodeL {
     int data;
-    NodeL* next;
-    NodeL* previous;
+    NodeL* next; // Указатель на следующий узел
+    NodeL* previous; // Указатель на предыдущий узел
 };
 
-// Структура для двусвязного списка
 struct DoubleList {
     NodeL* head;
     NodeL* tail;
 };
 
-// Функция добавления элемента в начало двусвязного списка
 void addToHeadL2(DoubleList& list, int value) {
-    NodeL* newNode = new NodeL; // Создаем новый узел
-    newNode->data = value; // Присваиваем ему значение
-    newNode->next = list.head; // Новый узел указывает на текущую голову
-    newNode->previous = nullptr; // Новый узел не имеет предыдущего узла
+    NodeL* newNode = new NodeL;
+    newNode->data = value; // Запис знач в нов узел
+    newNode->next = list.head; //Уст указатель на текущ голову 
+    newNode->previous = nullptr;
 
     if (list.head != nullptr) {
-        list.head->previous = newNode; // Если список не пустой, обновляем указатель предыдущего узла головы
-    } else {
-        list.tail = newNode; // Если список пустой, новый узел становится и головой, и хвостом
+        list.head->previous = newNode;//Уст указатель у старой головы на новый узел
+    } 
+    else {
+        list.tail = newNode;// Если список пуст, то нов узел хвост
     }
-    list.head = newNode; // Новый узел становится головой
+    list.head = newNode;
 }
 
-// Функция добавления элемента в конец двусвязного списка
 void addToTailL2(DoubleList& list, int value) {
-    NodeL* newNode = new NodeL; // Создаем новый узел
-    newNode->data = value; // Присваиваем ему значение
-    newNode->next = nullptr; // Новый узел не имеет следующего узла
-    newNode->previous = list.tail; // Новый узел указывает на текущий хвост
+    NodeL* newNode = new NodeL;
+    newNode->data = value;
+    newNode->next = nullptr;
+    newNode->previous = list.tail;
 
     if (list.tail != nullptr) {
-        list.tail->next = newNode; // Если список не пустой, обновляем указатель следующего узла хвоста
+        list.tail->next = newNode; //указ стар хвоста на новый узел
     } else {
-        list.head = newNode; // Если список пустой, новый узел становится и головой, и хвостом
+        list.head = newNode;
     }
-    list.tail = newNode; // Новый узел становится хвостом
+    list.tail = newNode;
 }
 
-// Функция удаления элемента из начала двусвязного списка
 void removeFromHeadL2(DoubleList& list) {
-    if (list.head == nullptr) return; // Если список пустой, выходим
+    if (list.head == nullptr) return;
 
-    NodeL* temp = list.head; // Сохраняем текущую голову
-    list.head = list.head->next; // Перемещаем голову на следующий элемент
+    NodeL* temp = list.head;
+    list.head = list.head->next;
 
     if (list.head != nullptr) {
-        list.head->previous = nullptr; // Обновляем указатель предыдущего узла новой головы
+        list.head->previous = nullptr; //указатель у новой головы в null
     } else {
-        list.tail = nullptr; // Если список стал пустым, обновляем указатель на хвост
+        list.tail = nullptr;
     }
-    delete temp; // Удаляем предыдущую голову
+    delete temp;
 }
 
-// Функция удаления элемента из конца двусвязного списка
 void removeFromTailL2(DoubleList& list) {
-    if (list.tail == nullptr) return; // Если список пустой, выходим
+    if (list.tail == nullptr) return;
 
-    NodeL* temp = list.tail; // Сохраняем текущий хвост
-    list.tail = list.tail->previous; // Перемещаем хвост на предыдущий элемент
+    NodeL* temp = list.tail;
+    list.tail = list.tail->previous;
 
     if (list.tail != nullptr) {
-        list.tail->next = nullptr; // Обновляем указатель следующего узла нового хвоста
+        list.tail->next = nullptr;
     } else {
-        list.head = nullptr; // Если список стал пустым, обновляем указатель на голову
+        list.head = nullptr;
     }
-    delete temp; // Удаляем предыдущий хвост
+    delete temp;
 }
-
-// Функция удаления элемента по значению из двусвязного списка
 void removeByValueL2(DoubleList& list, int value) {
-    NodeL* temp = list.head; // Начинаем с головы списка
+    NodeL* temp = list.head;
 
     while (temp != nullptr) {
-        if (temp->data == value) { // Если найден элемент с указанным значением
+        if (temp->data == value) {
             if (temp->previous != nullptr) {
-                temp->previous->next = temp->next; // Обновляем указатель следующего узла предыдущего узла
-            } else {
+                temp->previous->next = temp->next;
+            } 
+            else {
                 list.head = temp->next; // Удаляемый элемент - это голова
             }
 
             if (temp->next != nullptr) {
-                temp->next->previous = temp->previous; // Обновляем указатель предыдущего узла следующего узла
-            } else {
+                temp->next->previous = temp->previous;
+            } 
+            else {
                 list.tail = temp->previous; // Удаляемый элемент - это хвост
             }
 
-            delete temp; // Удаляем найденный элемент
+            delete temp;
             return;
         }
-        temp = temp->next; // Переходим к следующему узлу
+        temp = temp->next;
     }
 }
-
-// Функция поиска элемента по значению в двусвязном списке
+// Поиск по значению
 NodeL* findL2(DoubleList& list, int value) {
-    NodeL* temp = list.head; // Начинаем с головы списка
+    NodeL* temp = list.head;
     while (temp != nullptr) {
-        if (temp->data == value) { // Если найден элемент с указанным значением
-            return temp; // Возвращаем указатель на найденный элемент
+        if (temp->data == value) {
+            return temp;
         }
-        temp = temp->next; // Переходим к следующему узлу
+        temp = temp->next;
     }
-    return nullptr; // Если элемент не найден, возвращаем nullptr
+    return nullptr;
 }
 
-// Функция вывода содержимого двусвязного списка на экран
 void printList2(DoubleList& list) {
-    NodeL* temp = list.head; // Начинаем с головы списка
+    NodeL* temp = list.head;
     while (temp != nullptr) {
-        cout << temp->data << " "; // Выводим значение текущего узла
-        temp = temp->next; // Переходим к следующему узлу
+        cout << temp->data << " ";
+        temp = temp->next;
     }
     cout << endl;
 }
 
-// Функция освобождения памяти, занимаемой двусвязным списком
 void freeList2(DoubleList& list) {
-    NodeL* current = list.head; // Начинаем с головы списка
+    NodeL* current = list.head;
     while (current != nullptr) {
-        NodeL* toDelete = current; // Сохраняем текущий узел
-        current = current->next; // Переходим к следующему узлу
-        delete toDelete; // Удаляем предыдущий узел
+        NodeL* toDelete = current;
+        current = current->next;
+        delete toDelete;
     }
-    list.head = nullptr; // Обнуляем указатель на голову
-    list.tail = nullptr; // Обнуляем указатель на хвост
+    list.head = nullptr;
+    list.tail = nullptr;
 }
 
-// Функция записи двусвязного списка в файл
 void writeDoubleListToFile(const DoubleList& list, const string& filename) {
-    ofstream file(filename); // Открываем файл для записи
+    ofstream file(filename);
 
     if (!file.is_open()) {
-        cerr << "Ошибка при открытии файла для записи" << endl; // Проверка на успешное открытие файла
+        cerr << "Error when opening a file for recording" << endl;
         return;
     }
 
-    NodeL* temp = list.head; // Начинаем с головы списка
+    NodeL* temp = list.head;
     while (temp != nullptr) {
-        file << temp->data << endl; // Записываем значение текущего узла в файл
-        temp = temp->next; // Переходим к следующему узлу
+        file << temp->data << endl;
+        temp = temp->next;
     }
 
-    file.close(); // Закрываем файл
+    file.close();
 }
