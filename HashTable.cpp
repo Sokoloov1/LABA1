@@ -11,7 +11,7 @@ const int TABLE_SIZE = 10; // Размер хеш-таблицы
 struct HashTable {
     string key;
     string value;
-    HashTable* next; // Указатель на следующий элемент в цепочке
+    HashTable* next; // Указатель на следующий элемент в цепочке  (для обработки коллизий)
 };
 
 // Хеш-функция
@@ -20,13 +20,13 @@ int hashFunction(const string& key) {
     for (char ch : key) {
         hash += ch; // Суммируем ASCII-коды символов ключа
     }
-    return hash % TABLE_SIZE; // Возвращаем остаток от деления на размер хеш-таблицы
+    return hash % TABLE_SIZE;
 }
 
 // Добавление элемента (ключ-значение)
 void insertTable(HashTable* table[], const string& key, const string& value) {
-    int index = hashFunction(key); // Вычисляем индекс с помощью хеш-функции
-    HashTable* newNode = new HashTable{key, value, nullptr}; // Создаем новый узел
+    int index = hashFunction(key);
+    HashTable* newNode = new HashTable{key, value, nullptr};
 
     // Проверяем, есть ли уже элементы по этому индексу
     if (table[index] == nullptr) {
@@ -53,7 +53,7 @@ void insertTable(HashTable* table[], const string& key, const string& value) {
 
 // Получение значения по ключу
 string getValueTable(HashTable* table[], const string& key) {
-    int index = hashFunction(key); // Вычисляем индекс с помощью хеш-функции
+    int index = hashFunction(key);
     HashTable* temp = table[index];
     
     while (temp != nullptr) {
@@ -67,8 +67,8 @@ string getValueTable(HashTable* table[], const string& key) {
 
 // Удаление элемента по ключу
 void removeValueTable(HashTable* table[], const string& key) {
-    int index = hashFunction(key); // Вычисляем индекс с помощью хеш-функции
-    HashTable* temp = table[index];
+    int index = hashFunction(key);
+    HashTable* temp = table[index]; // Указатель на текущий узел
     HashTable* prev = nullptr;
 
     while (temp != nullptr) {
@@ -109,28 +109,27 @@ void freeTable(HashTable* table[]) {
         while (temp != nullptr) {
             HashTable* toDelete = temp;
             temp = temp->next;
-            delete toDelete; // Освобождаем память, занимаемую узлом
+            delete toDelete;
         }
     }
 }
 
-// Запись хеш-таблицы в файл
 void writeHashTableToFile(HashTable* table[], const string& filename) {
-    ofstream file(filename); // Открываем файл для записи
+    ofstream file(filename);
 
     if (!file.is_open()) {
-        cerr << "Ошибка при открытии файла для записи" << endl; // Проверка на успешное открытие файла
+        cerr << "Ошибка при открытии файла для записи" << endl;
         return;
     }
 
     for (int i = 0; i < TABLE_SIZE; ++i) {
         HashTable* temp = table[i];
         while (temp != nullptr) {
-            file << "[" << temp->key << ": " << temp->value << "] "; // Записываем ключ и значение в файл
+            file << "[" << temp->key << ": " << temp->value << "] ";
             temp = temp->next;
         }
         file << endl;
     }
 
-    file.close(); // Закрываем файл
+    file.close();
 }
