@@ -2,45 +2,40 @@
 #include <functional>
 
 using namespace std;
-
-// Конструктор класса: инициализирует корень дерева как nullptr
+// Конструктор класса корень дерева null
 FullBinaryTree::FullBinaryTree() : root(nullptr) {}
-
-// Деструктор: вызывает рекурсивную функцию для освобождения памяти, занимаемой деревом
+// Деструктор Вызывает рекурсивную функцию для освобождения памяти, занимаемой деревом.
 FullBinaryTree::~FullBinaryTree() {
     freeTree(root);
 }
-
-// Рекурсивная функция вставки узла
+// Рекурсивная функция вставки узла 
 NodeT* FullBinaryTree::insert(NodeT* root, int value) {
-    if (!root) return new NodeT(value); // Если узел пустой, создаем новый узел
+    if (!root) return new NodeT(value);
     if (value < root->value) root->left = insert(root->left, value); // Если значение меньше, рекурсивно вставляем в левое поддерево
-    else root->right = insert(root->right, value); // Иначе, рекурсивно вставляем в правое поддерево
+    else root->right = insert(root->right, value);
     return root;
 }
 
-// Функция поиска минимального элемента в дереве
 NodeT* FullBinaryTree::findMin(NodeT* root) {
     while (root && root->left) {
-        root = root->left; // Переходим к самому левому узлу
+        root = root->left;
     }
     return root;
 }
 
-// Рекурсивная функция удаления узла
-NodeT* FullBinaryTree::remove(NodeT* root, int value) {
-    if (!root) return nullptr; // Если узел пустой, возвращаем nullptr
+NodeT* FullBinaryTree::remove(NodeT* root, int value) {//удаление узла
+    if (!root) return nullptr;
 
-    // Если значение меньше, рекурсивно удаляем из левого поддерева
+    // Если знач меньше, рекурсивно удаляем из левого поддерева
     if (value < root->value) {
         root->left = remove(root->left, value);
     }
-    // Если значение больше, рекурсивно удаляем из правого поддерева
+    // Если знач больше, рекурсивно удаляем из правого поддерева
     else if (value > root->value) {
         root->right = remove(root->right, value);
     }
     else {
-        // Если у узла нет левого и правого поддерева
+       // Если нет лев и прав 
         if (!root->left && !root->right) {
             delete root;
             return nullptr;
@@ -51,104 +46,95 @@ NodeT* FullBinaryTree::remove(NodeT* root, int value) {
             delete root;
             return temp;
         }
-        // Если у узла есть только левое поддерево
         else if (!root->right) {
             NodeT* temp = root->left;
             delete root;
             return temp;
         }
-        // Если у узла есть два поддерева
+         // Если у узла есть два поддерева
         else {
-            NodeT* temp = findMin(root->right); // Находим минимальный элемент в правом поддереве
-            root->value = temp->value; // Копируем значение минимального элемента в текущий узел
-            root->right = remove(root->right, temp->value); // Удаляем минимальный элемент из правого поддерева
+            NodeT* temp = findMin(root->right);
+            root->value = temp->value;
+            root->right = remove(root->right, temp->value);
         }
     }
     return root;
 }
 
-// Рекурсивная функция поиска узла
 NodeT* FullBinaryTree::search(NodeT* root, int value) const {
-    if (!root || root->value == value) return root; // Если узел пустой или найден, возвращаем узел
-    if (value < root->value) return search(root->left, value); // Если значение меньше, ищем в левом поддереве
-    return search(root->right, value); // Иначе, ищем в правом поддереве
+    if (!root || root->value == value) return root;
+    if (value < root->value) return search(root->left, value);
+    return search(root->right, value);
 }
 
-// Функция проверки, является ли дерево полным
 bool FullBinaryTree::isFull(NodeT* root) const {
     return isFullHelper(root);
 }
 
-// Рекурсивная функция проверки, является ли дерево полным
 bool FullBinaryTree::isFullHelper(NodeT* node) const {
-    if (!node) return true; // Если узел пустой, дерево полное
-    if ((node->left && !node->right) || (!node->left && node->right)) return false; // Если у узла есть только одно поддерево, дерево не полное
-    return isFullHelper(node->left) && isFullHelper(node->right); // Рекурсивно проверяем левое и правое поддерево
+    if (!node) return true;
+    if ((node->left && !node->right) || (!node->left && node->right)) return false;
+    return isFullHelper(node->left) && isFullHelper(node->right);
 }
 
-// Функция вывода дерева на экран
 void FullBinaryTree::print(NodeT* root) const {
     printHelper(root, 0);
 }
 
-// Рекурсивная функция вывода дерева на экран
 void FullBinaryTree::printHelper(NodeT* root, int level) const {
-    if (!root) return; // Если узел пустой, выходим
+    if (!root) return;
 
-    printHelper(root->right, level + 1); // Рекурсивно выводим правое поддерево
+    printHelper(root->right, level + 1);
 
     for (int i = 0; i < level; i++) {
-        cout << "    ";  // Выводим отступы в зависимости от уровня
+        cout << "    ";  
     }
-    cout << root->value << endl; // Выводим значение узла
+    cout << root->value << endl;
 
-    printHelper(root->left, level + 1); // Рекурсивно выводим левое поддерево
+    printHelper(root->left, level + 1);
 }
 
-// Функция записи дерева в файл
 void FullBinaryTree::writeToFile(NodeT* root, const string& filename) {
     ofstream file(filename);
-    if (!file.is_open()) return; // Если файл не открыт, выходим
+    if (!file.is_open()) return;
 
-    // Лямбда-функция для обхода дерева в прямом порядке и записи в файл
+    ////лямбда-функци для обхода дерева в прямом порядке и записи в файл.
     function<void(NodeT*)> write = [&](NodeT* node) {
         if (!node) {
-            file << "# "; // Если узел пустой, записываем "#"
+            file << "# ";
             return;
         }
-        file << node->value << " "; // Записываем значение узла
-        write(node->left); // Рекурсивно записываем левое поддерево
-        write(node->right); // Рекурсивно записываем правое поддерево
-    };
+        file << node->value << " ";
+        write(node->left);
+        write(node->right);
+        };
     write(root);
     file.close();
 }
 
-// Функция чтения дерева из файла
 NodeT* FullBinaryTree::readFromFile(const string& filename) {
     ifstream file(filename);
-    if (!file.is_open()) return nullptr; // Если файл не открыт, возвращаем nullptr
+    if (!file.is_open()) return nullptr;
 
-    // Лямбда-функция для чтения дерева из файла
     function<NodeT* ()> read = [&]() -> NodeT* {
         string val;
         file >> val;
-        if (val == "#" || file.fail()) return nullptr; // Если встретили "#" или ошибка чтения, возвращаем nullptr
+        if (val == "#" || file.fail()) return nullptr;
 
-        NodeT* node = new NodeT(stoi(val)); // Создаем новый узел с прочитанным значением
-        node->left = read(); // Рекурсивно читаем левое поддерево
-        node->right = read(); // Рекурсивно читаем правое поддерево
+        NodeT* node = new NodeT(stoi(val));
+        node->left = read();
+        node->right = read();
         return node;
-    };
+        };
     root = read();
     file.close();
     return root;
 }
 
-// Рекурсивная функция освобождения памяти, занимаемой деревом
 void FullBinaryTree::freeTree(NodeT* root) {
-    if (!root) return; // Если узел пустой, выходим
-    freeTree(root->left); // Рекурсивно освобождаем левое поддерево
-    freeTree(root->right); // Рекурсивно освобождаем правое поддерево
-    delete root; // Удаляем текущий узел
+    if (!root) return;
+    freeTree(root->left);
+    freeTree(root->right);
+    delete root;
 }
+
