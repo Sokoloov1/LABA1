@@ -1,7 +1,6 @@
 #pragma once
 #include <iostream>
 using namespace std;
-
 struct ListOne {
     int data;
     ListOne* next = nullptr;
